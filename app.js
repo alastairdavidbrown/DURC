@@ -38,4 +38,5 @@ mongoose.connect(configDB.url); 					// connect to our database
 require('./config/passport')(passport); 			// pass passport for configuration
 require('./app/routes.js')(app, passport); 			// load our routes and pass in our app and fully configured passport
 
-app.listen(80);									
+app.set('port', process.env.PORT);
+app.listen();									
