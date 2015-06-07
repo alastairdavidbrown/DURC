@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Starter Template for Bootstrap</title>
+	<script src="fragment.js"></script>
+	<div data-fragment="head-frag.html"></div>
+</head>
+
+<body>
+
+	<!-- insert the navbar -->
+	<div data-fragment="nav-bar-frag.html"></div>
+	
+	<div class="container">
+		<h2>Contcts...</h2>
+		<table class="table table-condensed table-striped">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Firstname</th>
+					<th>Lastname</th>
+					<th>Email</th>
+					<th>Tel</th>
+					<th>Message</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				<% for(var i=0; i<contacts.length; i++) { %>
+					<tr>
+						<td>
+							<%=new String(contacts[i].date).replace(/GMT.*/,'') %>
+						</td>
+						<td>
+							<%=contacts[i].fname %>
+						</td>
+						<td>
+							<%=contacts[i].lname %>
+						</td>
+						<td>
+							<%=contacts[i].email %>
+						</td>
+						<td>
+							<%=contacts[i].phone %>
+						</td>
+						<td>
+							<%=contacts[i].message %>
+						</td>
+					</tr>
+					<% } %>
+
+			</tbody>
+		</table>
+	</div>
+
+</body>

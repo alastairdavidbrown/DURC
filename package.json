@@ -1,0 +1,19 @@
+{
+  "name": "durc-express",
+  "main": "app.js",
+  "dependencies": {
+    "express": "*",
+    "bootstrap": "*",
+    "morgan": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "connect-flash": "*",
+    "express-session": "*",
+    "cookie-parser": "*",
+    "body-parser": "*",
+    "multer": "*",
+    "ejs": "*",
+    "bcrypt-nodejs": "*",
+    "mongoose": "*"
+  }
+}

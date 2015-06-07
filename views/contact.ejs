@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Starter Template for Bootstrap</title>
+	<script src="fragment.js"></script>
+	<div data-fragment="head-frag.html"></div>
+</head>
+
+<body>
+
+	<!-- insert the navbar -->
+	<div data-fragment="nav-bar-frag.html"></div>
+	
+	<div class="container">
+		<!-- show any messages that are passed in at render -->
+		<% if (message.length > 0) { %>
+			<div class="alert alert-danger">
+				<%= message %>
+			</div>
+		<% } %>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="well well-sm">
+					<form id="contact" class="form-horizontal" method="post">
+						<fieldset>
+							<legend class="text-center header">Contact us</legend>
+
+							<div class="form-group">
+								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
+								<div class="col-md-8">
+									<input id="fname" name="fname" type="text" placeholder="First Name" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
+								<div class="col-md-8">
+									<input id="lname" name="lname" type="text" placeholder="Last Name" class="form-control">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-envelope-o bigicon"></i></span>
+								<div class="col-md-8">
+									<input id="email" name="email" type="text" placeholder="Email Address" class="form-control">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
+								<div class="col-md-8">
+									<input id="phone" name="phone" type="text" placeholder="Phone" class="form-control">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-pencil-square-o bigicon"></i></span>
+								<div class="col-md-8">
+									<textarea class="form-control" id="message" name="message" placeholder="Enter your massage  here. We'll get back to you as soon as we can!" rows="7"></textarea>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="col-md-12 text-center">
+									<button type="submit" class="btn btn-primary btn-lg">Submit</button>
+								</div>
+							</div>
+
+						</fieldset>
+					</form>
+					<script>
+						$(document).ready(function () {
+							$('#contact')
+								.formValidation({
+									framework: 'bootstrap',
+									icon: {
+										valid: 'glyphicon glyphicon-ok',
+										invalid: 'glyphicon glyphicon-remove',
+										validating: 'glyphicon glyphicon-refresh'
+									},
+									fields: {
+										fname: {
+											validators: {
+												notEmpty: {
+													message: 'The title is required'
+												}
+											}
+										},
+
+									}
+								})
+								.on('success.field.fv', function (e, data) {
+									// $(e.target)  --> The field element
+									// data.fv      --> The FormValidation instance
+									// data.field   --> The field name
+									// data.element --> The field element
+
+									var $parent = data.element.parents('.form-group');
+
+									// Remove the has-success class
+									$parent.removeClass('has-success');
+
+									// Hide the success icon
+									data.element.data('fv.icon').hide();
+								});
+						});
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
