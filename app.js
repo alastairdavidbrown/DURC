@@ -34,6 +34,8 @@ app.use(flash());					// flash for messaging
 app.use(morgan('combined'));		// logger
 
 var configDB = require('./config/database.js');		// config the database
+
+console.log("Env var " + process.env.DB_URL);
 console.log("Connecting to " + configDB.url);
 
 mongoose.connect(configDB.url); 					// connect to our database
