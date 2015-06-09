@@ -34,9 +34,11 @@ app.use(flash());					// flash for messaging
 app.use(morgan('combined'));		// logger
 
 var configDB = require('./config/database.js');		// config the database
+console.log("Connecting to " + configDB.url);
+
 mongoose.connect(configDB.url); 					// connect to our database
 require('./config/passport')(passport); 			// pass passport for configuration
 require('./app/routes.js')(app, passport); 			// load our routes and pass in our app and fully configured passport
 
 console.log("Starting on port:" + process.env.PORT)
-app.listen(process.env.PORT);									
+app.listen(process.env.PORT || 3000);									
