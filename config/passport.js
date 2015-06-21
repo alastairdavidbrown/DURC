@@ -4,7 +4,7 @@ var User = require('../app/models/user');
 // expose this function to our app using module.exports
 module.exports = function (passport) {
 
-	function validateUserDB(username, password, fn) {
+	function validateUserDB(username, password, request, fn) {
 		
 		// find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
@@ -15,7 +15,7 @@ module.exports = function (passport) {
 
             // if no user is found, return the message
             if (!user)
-                return fn(null, false, req.flash('loginMessage', 'Authentication Failed')); 
+                return fn(null, false, request.flash('loginMessage', 'Authentication Failed')); 
 						
             // if the user is found but the password is wrong
             if (!user.validPassword(password)){
@@ -38,7 +38,7 @@ module.exports = function (passport) {
 		},
 		function (req, email, password, done) { // callback with email and password from our form
 
-			validateUserDB(email, password, function (user) {	
+			validateUserDB(email, password, req, function (user) {	
 
 				// if no validation fails return the message
 				if (!user)

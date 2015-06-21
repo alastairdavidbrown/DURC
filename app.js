@@ -33,12 +33,13 @@ app.use(passport.session());
 app.use(flash());					// flash for messaging
 app.use(morgan('combined'));		// logger
 
-var configDB = require('./config/database.js');		// config the database
+//var configDB = require('./config/database.js');		// config the database
 
-console.log("Env var " + process.env.DB_URL);
-console.log("Connecting to " + configDB.url);
+//console.log("Env var " + process.env.DB_URL);
+//console.log("Connecting to " + configDB.url);
 
 mongoose.connect(process.env.DB_URL); 					// connect to our database
+
 require('./config/passport')(passport); 			// pass passport for configuration
 require('./app/routes.js')(app, passport); 			// load our routes and pass in our app and fully configured passport
 
