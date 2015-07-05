@@ -4,10 +4,10 @@
 var Contact = require('../app/models/contact');
 // load up the contact model
 var User = require('../app/models/user');
+// file system
+var fs = require('fs');
 
-
-
-module.exports = function (app, passport) {
+module.exports = function (app, passport,express) {
 	
 	// START Handler for contact form post
 	app.post('/contact', function (request, response) {
@@ -33,12 +33,7 @@ module.exports = function (app, passport) {
 				console.log(err);
 				if (err) return console.error(err); // we should handle this
 			});
-			var newUser = new User();
-		newUser.uname = "MeM";
-			newUser.save(function (err) {
-				console.log(err);
-				if (err) return console.error(err); // we should handle this
-			});		
+					
 			// confirm to the user that we'll get back
 			response.render('contact-confirm');
 					
@@ -48,21 +43,25 @@ module.exports = function (app, passport) {
 			
 
 	});
-
-	// dump a stack
-	app.get('/dump', function (req, res) {
-		
-		console.log(new Error().stack);
-		console.log("Trace");
-		console.trace();
-		
-	});
-
 	
+	app.get('/', function (req, res) {		
+		res.render('index.ejs', {});
+	});
+	
+	app.get('/events', function (req, res) {		
+		res.render('events.ejs', {});
+	});
+	
+	app.get('/community', function (req, res) {		
+		res.render('community.ejs', {});
+	});
+	
+	app.get('/vision', function (req, res) {		
+		res.render('vision.ejs', {});
+	});
 	
 	// the login form
-	app.get('/login', function (req, res) {
-		
+	app.get('/login', function (req, res) {		
 		res.render('login.ejs', {
 			message: req.flash('loginMessage')
 		});
@@ -76,8 +75,8 @@ module.exports = function (app, passport) {
 		});
 	});
 	
+	// Logout
 	app.get('/logout', function (req, res) {
-		
 		res.render('login.ejs', {
 			message: req.flash('loginMessage')
 		});
@@ -85,6 +84,7 @@ module.exports = function (app, passport) {
 		req.session.destroy();
 	});
 
+	// PAge to show contacts received
 	app.get('/contacts', isLoggedIn, function (req, res) {
 
 		var contacts = [];
@@ -107,10 +107,18 @@ module.exports = function (app, passport) {
 		
 	});
 
-	app.get('/signup', isLoggedIn, function (req, res) {
-			res.render('signup.ejs');
-	});
+	// The images pages
+	app.get('/gallery', function (req, res) {
+		
+		fs.readdir(__dirname + '/../public/images/OurHistory', function (err, files) {
+  			if (err) throw err;
+			res.render('gallery.ejs', {
+				files: files
+			});
+		});
+		
 
+	});
 	
 	// authentication route, used by the login form
 	app.post('/authenticate', passport.authenticate('local-login', {
