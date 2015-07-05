@@ -29,16 +29,14 @@
 					<!-- class of slide for animation -->
 					<div class="carousel-inner" role="listbox">
 						<div class="item active">
-							<img src="<%= 'images/OurHistory/'+files[0] %>" alt="" />
+							<img class="featurette-image img-rounded img-responsive"  src="<%= 'images/OurHistory/'+files[0] %>" alt="" />
 						</div>
 
 						<% for(var i=1; i<files.length; i++) { %>
 							<% console.log (files[i]) %>
 								<div class="item">
-									<img src="<%= 'images/OurHistory/'+files[i] %>" alt="" />
-
+									<img class="featurette-image img-rounded img-responsive" src="<%= 'images/OurHistory/'+files[i] %>" alt="" />
 								</div>
-
 								<% } %>
 
 					</div>
