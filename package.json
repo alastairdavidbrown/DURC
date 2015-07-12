@@ -1,4 +1,3 @@
-{
   "name": "durc-express",
   "main": "app.js",
   "dependencies": {
@@ -16,4 +15,4 @@
     "bcrypt-nodejs": "*",
     "mongoose": "*"
   }
-}
+
