@@ -84,7 +84,7 @@ module.exports = function (app, passport,express) {
 		req.session.destroy();
 	});
 
-	// PAge to show contacts received
+	// Page to show contacts received
 	app.get('/contacts', isLoggedIn, function (req, res) {
 
 		var contacts = [];
@@ -107,6 +107,17 @@ module.exports = function (app, passport,express) {
 		
 	});
 
+	// Page to manage content
+	app.get('/create-content', isLoggedIn, function (req, res) {
+
+			res.render('create-content.ejs', {
+				//user: req.user, 
+				//contacts: contacts
+			});
+		
+		
+	    });
+			
 	// The images pages
 	app.get('/gallery', function (req, res) {
 		
@@ -122,11 +133,14 @@ module.exports = function (app, passport,express) {
 	
 	// authentication route, used by the login form
 	app.post('/authenticate', passport.authenticate('local-login', {
-		successRedirect: '/contacts', // redirect to the secure profile section
+		//successRedirect: '/contacts', // redirect to the secure profile section
+		successRedirect: '/create-content', // redirect to the secure profile section
 		failureRedirect: '/login', // redirect back to the signup page if there is an error
 		failureFlash: true // allow flash messages
 	}));
 
+
+	
 	// Helpers
 	function isLoggedIn(req, res, next) {
 
