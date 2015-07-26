@@ -2,8 +2,11 @@
 
 // load up the contact model
 var Contact = require('../app/models/contact');
-// load up the contact model
+// load up the user model
 var User = require('../app/models/user');
+// load the content model
+var Content = require('../app/models/content');
+
 // file system
 var fs = require('fs');
 
@@ -30,6 +33,37 @@ module.exports = function (app, passport,express) {
 					message: 'Wow that\'s big, try typing a bit less!' });
 		}else{
 			newContact.save(function (err) {
+				console.log(err);
+				if (err) return console.error(err); // we should handle this
+			});
+					
+			// confirm to the user that we'll get back
+			response.render('contact-confirm');
+					
+		}
+		
+		response.end();
+			
+
+	});
+	
+	app.post('/create-content', function (request, response) {
+
+		
+		// Persist the contact		
+		var newContent = new Content();
+		
+		newContent.date = new Date();
+		newContent.heading = request.body.heading;
+		newContent.content = request.body.content;
+		
+		// Check the size, if it's massive, redirect to the contact form with a message
+		console.log("Request Body is:" + JSON.stringify(request.body).length);
+		if (JSON.stringify(request.body).length > 2048) {
+			response.render('contact', {
+					message: 'Wow that\'s big, try typing a bit less!' });
+		}else{
+			newContent.save(function (err) {
 				console.log(err);
 				if (err) return console.error(err); // we should handle this
 			});
@@ -107,17 +141,32 @@ module.exports = function (app, passport,express) {
 		
 	});
 
-	// Page to manage content
+	// Page to CRUD content
 	app.get('/create-content', isLoggedIn, function (req, res) {
 
+		var _content = [];
+
+		Content.find({}, function(err, queryContent) {
+			var i = 0;
+    		queryContent.forEach(function(content) {
+				_content[i] = {date: content.date, type: content.type, heading: content.heading, content: content.content};
+				i++;
+			});
+
 			res.render('create-content.ejs', {
-				//user: req.user, 
-				//contacts: contacts
+				query: req.query,
+				user: req.user, 
+				content: _content,
+				
 			});
 		
 		
 	    });
-			
+		
+		
+	});
+	
+	
 	// The images pages
 	app.get('/gallery', function (req, res) {
 		

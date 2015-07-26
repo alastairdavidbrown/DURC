@@ -1,4 +1,4 @@
-// app/models/contacts.js
+// app/models/contact.js
 
 var mongoose = require('mongoose');
 

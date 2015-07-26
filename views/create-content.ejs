@@ -12,99 +12,97 @@
 	<!-- insert the navbar -->
 	<div data-fragment="nav-bar-frag.html"></div>
 
-	<div class="well">CMS</div>
+	<!-- set the page size and work out what page to display -->
+	<% var pageSize=6 %>
+	<% var pageRequested=query.page %>
+	<% if (typeof pageRequested === "undefined")pageRequested=1; %>
+	<% var startRow=pageSize*(pageRequested-1) %>
+	<% var endRow=(content.length < startRow+pageSize ?  content.length : startRow+pageSize) %>
+	<% var pages=(Math.ceil(content.length/pageSize)) %>
+	<% console.log("pageSize: pageRequested: startRow: endRow: content.length" + pageSize + ":" + pageRequested + ":" + startRow + ":" + endRow + ": " + content.length) %>
 
+	
+	<div class="well"></div>
 	<div class="container">
-		
-		<div class="row">
-			<div class="col-md-12">
-				<div class="well well-sm">
-					<form id="contact" class="form-horizontal" method="post">
-						<fieldset>
-							<legend class="text-center header">Contact us</legend>
-
-							<div class="form-group">
-								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
-								<div class="col-md-8">
-									<input id="fname" name="fname" type="text" placeholder="First Name" class="form-control">
-								</div>
-							</div>
-							<div class="form-group">
-								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
-								<div class="col-md-8">
-									<input id="lname" name="lname" type="text" placeholder="Last Name" class="form-control">
-								</div>
-							</div>
-
-							<div class="form-group">
-								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-envelope-o bigicon"></i></span>
-								<div class="col-md-8">
-									<input id="email" name="email" type="text" placeholder="Email Address" class="form-control">
-								</div>
-							</div>
-
-							<div class="form-group">
-								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
-								<div class="col-md-8">
-									<input id="phone" name="phone" type="text" placeholder="Phone" class="form-control">
-								</div>
-							</div>
-
-							<div class="form-group">
-								<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-pencil-square-o bigicon"></i></span>
-								<div class="col-md-8">
-									<textarea class="form-control" id="message" name="message" placeholder="Enter your massage  here. We'll get back to you as soon as we can!" rows="7"></textarea>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="col-md-12 text-center">
-									<button type="submit" class="btn btn-primary btn-lg">Submit</button>
-								</div>
-							</div>
-
-						</fieldset>
-					</form>
-					<script>
-						$(document).ready(function () {
-							$('#contact')
-								.formValidation({
-									framework: 'bootstrap',
-									icon: {
-										valid: 'glyphicon glyphicon-ok',
-										invalid: 'glyphicon glyphicon-remove',
-										validating: 'glyphicon glyphicon-refresh'
-									},
-									fields: {
-										fname: {
-											validators: {
-												notEmpty: {
-													message: 'The title is required'
-												}
-											}
-										},
-
-									}
-								})
-								.on('success.field.fv', function (e, data) {
-									// $(e.target)  --> The field element
-									// data.fv      --> The FormValidation instance
-									// data.field   --> The field name
-									// data.element --> The field element
-
-									var $parent = data.element.parents('.form-group');
-
-									// Remove the has-success class
-									$parent.removeClass('has-success');
-
-									// Hide the success icon
-									data.element.data('fv.icon').hide();
-								});
-						});
-					</script>
-				</div>
-			</div>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Heading</th>
+						<th>Content</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% for(var i=startRow; i<endRow; i++) { %>
+						<tr>
+							<td>
+								<%=content[i].heading %>
+							</td>
+							<td>
+								<%=content[i].content %>
+							</td>
+							<td>
+								<a href=""><span class="glyphicon glyphicon-edit"></span>Edit</a>
+							</td>
+							<td>
+								<a href=""><span class="glyphicon glyphicon-trash"></span>Delete</a>
+							</td>
+						<tr>
+					<% } %>	
+				</tbody>
+			</table>
 		</div>
+		
+		<!-- pagination control -->
+		<% if(content.length > pageSize ) { %>
+			<ul class="pagination">
+				<% if (pageRequested == 1 ) { %>
+					<li class="disabled"><a href="#">&laquo;</a></li>
+				<% }else { %>
+					<li><a href="?page=<%=pageRequested-1%>">&laquo;</a></li>
+				<% } %>
+				<% for (var i = 1; i<= pages; i++) { %> 
+					<% if (i == pageRequested) { %>
+						<li class="active"> <a href="?page=<%= i %>"> <%= i %> </a></li>	
+					<% }else{ %>
+						<li> <a href="?page=<%= i %>"> <%= i %> </a></li>
+					<% } %>
+				<% } %>
+				
+				<% if (pageRequested == pages ) { %>
+					<li class="disabled"> <a href="#"> &raquo;</a></li>
+				<% }else { %>
+					<li><a href="?page=<%=Number(pageRequested)+1%>">&raquo;</a></li>
+				<% } %>
+				
+				
+				
+			</ul>
+		<% } %>
 	</div>
+	<div class="container">
+		<form id="contact" class="form-horizontal" method="post">
+			<fieldset>
+				<legend class="text-center header">Add New</legend>
 
+			<div class="form-group">
+			<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
+			<div class="col-md-8">
+				<input id="heading" name="heading" type="text" value="Heading" class="form-control">
+			</div>
+				</div>
+				<div class="form-group">
+					<span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
+					<div class="col-md-8">
+						<input id="content" name="content" type="text" placeholder="Content" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-12 text-center">
+						<button type="submit" class="btn btn-primary btn-lg">Submit</button>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
 </body>

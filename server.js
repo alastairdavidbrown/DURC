@@ -35,8 +35,7 @@ app.use(morgan('combined'));		// logger
 
 //var configDB = require('./config/database.js');		// config the database
 
-console.log("Env var " + process.env.DB_URL);
-//console.log("Connecting to " + configDB.url);
+if (process.env.DB_URL) console.log("Env var " + process.env.DB_URL);
 
 mongoose.connect(process.env.DB_URL_APP); 					// connect to our database
 
