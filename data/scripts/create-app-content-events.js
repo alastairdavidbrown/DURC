@@ -1,5 +1,4 @@
 db = db.getSiblingDB('durc-db')
-db.content.remove({})
 
 var bulk = db.content.initializeUnorderedBulkOp();
 bulk.insert( { 	type: "event", 

@@ -3,14 +3,16 @@
 
 <head>
 	<title>Starter Template for Bootstrap</title>
-	<script src="fragment.js"></script>
-	<div data-fragment="head-frag.html"></div>
+	<script src="/fragment.js"></script>
+	<div data-fragment="/head-frag.html"></div>
 </head>
 
 <body>
 
 	<!-- insert the navbar -->
-	<div data-fragment="nav-bar-frag.html"></div>
+	<div data-fragment="/nav-bar-frag.html"></div>
+	
+	<div class="well"></div>
 
 	<!-- set the page size and work out what page to display -->
 	<% var pageSize=6 %>
@@ -19,13 +21,23 @@
 	<% var startRow=pageSize*(pageRequested-1) %>
 	<% var endRow=(content.length < startRow+pageSize ?  content.length : startRow+pageSize) %>
 	<% var pages=(Math.ceil(content.length/pageSize)) %>
-	<% console.log("pageSize: pageRequested: startRow: endRow: content.length" + pageSize + ":" + pageRequested + ":" + startRow + ":" + endRow + ": " + content.length) %>
 
 	
-	<div class="well"></div>
 	<div class="container">
+		<!-- Single button -->
+		<div class="btn-group">
+  			<button type="button" class="btn btn-default dropdown-toggle" 
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Content Type<span class="caret"></span>
+  			</button>
+		  <ul class="dropdown-menu">
+			<li><a href="/create-content/event">Events</a></li>
+			<li><a href="/create-content/community">Community</a></li>
+		  </ul>
+		</div>
 		<div class="table-responsive">
+			
 			<table class="table table-hover">
+			
 				<thead>
 					<tr>
 						<th>Heading</th>
@@ -42,10 +54,10 @@
 								<%=content[i].content %>
 							</td>
 							<td>
-								<a href=""><span class="glyphicon glyphicon-edit"></span>Edit..</a>
+								<a href="/content-edit/<%=content[i].id%>"><span class="glyphicon glyphicon-edit"></span>Edit..</a>
 							</td>
 							<td>
-								<a href=""><span class="glyphicon glyphicon-trash"></span>Delete</a>
+								<a href="/content-delete/<%=content[i].id%>"<span class="glyphicon glyphicon-trash"></span>Delete</a>
 							</td>
 						<tr>
 					<% } %>	
@@ -54,11 +66,15 @@
 					<form id="content" class="form-horizontal" method="post">
 
 						<tr>
+							
 							<td>
 								<input id="heading" name="heading" type="text" placeholder="Heading" class="form-control">
 							</td>
 							<td>
 								<input id="content" name="content" type="text" placeholder="Content" class="form-control">
+							</td>
+							<td>
+								<input id="type" name="type" type="text" value="<%=type%>" class="hide">
 							</td>
 							<td>
 								<button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -99,4 +115,13 @@
 			</ul>
 		<% } %>
 	</div>
+	<!-- Bootstrap core JavaScript
+        ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="/dist/js/bootstrap.min.js"></script>
+
+	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+	<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+
 </body>
