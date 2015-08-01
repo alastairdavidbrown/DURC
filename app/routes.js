@@ -6,6 +6,9 @@
 // abstract get content and get rid of confimration page
 // get rid of console logging
 // add footer fragment.
+// check big messages are handled well
+// content-confirm consostency of parameters
+// Make the static content descriptions dunamic (not all the same as events!)
 
 // load up the contact model
 var Contact = require('../app/models/contact');
@@ -68,7 +71,8 @@ module.exports = function (app, passport,express) {
 						_content.remove();
 						console.log("deleted" + _content._id + ":" + _content.heading);
 						response.render('content-confirm', {
-							content: _content
+							content: _content,
+							type: _content.type
 						});
 					}else{
 						response.render('save-error');
@@ -108,8 +112,11 @@ module.exports = function (app, passport,express) {
 
 					_content.save(function (err) {
     					if (err) return handleError(err);
-						console.log("Saved");
-    					response.render('content-confirm.ejs');
+						console.log("Saved");				
+						response.render('content-confirm.ejs', {
+							type: request.body.type
+						});
+						
   					});
 				}
 				
@@ -117,7 +124,7 @@ module.exports = function (app, passport,express) {
 
 	});
 	
-	app.post('/create-content/:type(event|community)', function (request, response) {
+	app.post('/create-content/:type(event|community|vison)', function (request, response) {
 
 		// Persist the contact		
 		var newContent = new Content();
@@ -158,18 +165,18 @@ module.exports = function (app, passport,express) {
 	});
 	
 	
-	app.get('/events', function (req, res) {
+	app.get('/show-content/:type(event|community|vision)', function (req, res) {
 		
 		var _content = [];
 		
-		Content.find({}, function(err, queryContent) {
+		Content.find({'type': req.params.type}, function(err, queryContent) {
 			var i = 0;
     		queryContent.forEach(function(content) {
 				_content[i] = {id: content._id, date: content.date, type: content.type, heading: content.heading, content: content.content};
 				i++;
 			});
 				
-			res.render('events.ejs', {
+			res.render('show-content', {
 					content: _content
 			});
 		});
@@ -215,7 +222,7 @@ module.exports = function (app, passport,express) {
 		Contact.find({}, function(err, queryContacts) {
 			var i = 0;
     		queryContacts.forEach(function(contact) {
-				contacts[i] = {date: contact.date, fname: contact.fname, lname: contact.lname, phone: contact.phone, email: contact.email, message: contact.message };
+				_contacts[i] = {date: contact.date, fname: contact.fname, lname: contact.lname, phone: contact.phone, email: contact.email, message: contact.message };
 				i++;
 			});
 
@@ -228,7 +235,7 @@ module.exports = function (app, passport,express) {
 
 	
 	// Page to CRUD content - regexp to avoid recursion for js loads firing for loading e.g. /create-content/fragment.js
-	app.get('/create-content/:type(event|community)', isLoggedIn, function (req, res) {
+	app.get('/create-content/:type(event|community|vision)', isLoggedIn, function (req, res) {
 
 		console.log("In Create Content, type is " + req.params.type);
 		var _content = [];
