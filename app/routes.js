@@ -9,14 +9,23 @@
 // check big messages are handled well
 // content-confirm consostency of parameters
 // Make the static content descriptions dunamic (not all the same as events!)
+// abstract the findByID and find's
+// remove regexps on the :params shouldn't be required if absolute paths used on the hrefs in the template. 
+// get rid of the _ from the _contents etc.
+// check exception handling on all queries
 
-// load up the contact model
-var Contact = require('../app/models/contact');
-// load up the user model
+
+// Models -------------------------------
+// User Model
 var User = require('../app/models/user');
-// load the content model
+// Contact Model
+var Contact = require('../app/models/contact');
+// Content Model
 var Content = require('../app/models/content');
-// Mongoose
+// ContentType Model
+var ContentType = require('../app/models/contenttype');
+
+// Mongoose -----------------------------
 var mongoose = require('mongoose');
 
 
@@ -167,19 +176,32 @@ module.exports = function (app, passport,express) {
 	
 	app.get('/show-content/:type(event|community|vision)', function (req, res) {
 		
-		var _content = [];
-		
-		Content.find({'type': req.params.type}, function(err, queryContent) {
-			var i = 0;
-    		queryContent.forEach(function(content) {
-				_content[i] = {id: content._id, date: content.date, type: content.type, heading: content.heading, content: content.content};
-				i++;
+		// Look up the content type 
+		var _contentType;
+		console.log("Looking for content type " + req.params.type);
+		ContentType.find({'type': req.params.type}, function(err, queryContentType, _contentType) {
+			if (err){
+				console.log(err);
+				return(err);
+			}
+			_contentType =  {type: queryContentType[0].type, description: queryContentType[0].description};
+			console.log("Content type is " + _contentType.type + " description is " + _contentType.description);
+
+			// Now get the content 
+			var _content = [];
+			Content.find({'type': req.params.type}, function(err, queryContent) {
+				var i = 0;
+				queryContent.forEach(function(content) {
+					_content[i] = {id: content._id, date: content.date, type: content.type, heading: content.heading, content: content.content};
+					i++;
+				});
+
+				res.render('show-content', {
+						contentType: _contentType,
+						content: _content
+				});
 			});
-				
-			res.render('show-content', {
-					content: _content
-			});
-		});
+		});		
 	});
 	
 	app.get('/community', function (req, res) {		
