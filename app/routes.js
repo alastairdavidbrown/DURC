@@ -1,14 +1,14 @@
 // app/routes.js
 
 // todo Secure services
+// create admin login link
 // res/respose consistent
 // break the momolith
 // abstract get content and get rid of confimration page
 // get rid of console logging
 // add footer fragment.
 // check big messages are handled well
-// content-confirm consostency of parameters
-// Make the static content descriptions dunamic (not all the same as events!)
+// content-confirm consistency of parameters
 // abstract the findByID and find's
 // remove regexps on the :params shouldn't be required if absolute paths used on the hrefs in the template. 
 // get rid of the _ from the _contents etc.
