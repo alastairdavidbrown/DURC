@@ -1,12 +1,10 @@
 // app/routes.js
 
-// todo Secure services
-// create admin login link
+// stop delete or edits crashing if id not found.
 // res/respose consistent
-// break the momolith
+// break the monolith
 // abstract get content and get rid of confimration page
 // get rid of console logging
-// add footer fragment.
 // check big messages are handled well
 // content-confirm consistency of parameters
 // abstract the findByID and find's
@@ -49,14 +47,13 @@ module.exports = function (app, passport,express) {
 		newContact.date = new Date();
 		
 		// Check the size, if it's massive, redirect to the contact form with a message
-		console.log("Request Body is:" + JSON.stringify(request.body).length);
 		if (JSON.stringify(request.body).length > 2048) {
 			response.render('contact', {
+					user: request.user,
 					message: 'Wow that\'s big, try typing a bit less!' });
 		}else{
 			newContact.save(function (err) {
-				console.log(err);
-				if (err) return console.error(err); // we should handle this
+				if (err) return console.error(err); 
 			});
 					
 			// confirm to the user that we'll get back
@@ -69,73 +66,30 @@ module.exports = function (app, passport,express) {
 
 	});
 	
-	app.get('/content-delete/:id([0-9abcde]*)', function (request, response) {
+	app.get('/content-delete/:id([0-9abcde]*)', isLoggedIn, function (request, response) {
 		
 		console.log("Deleting" + request.params.id);
-		Content.findById((request.params.id),function (err, _content) {
-				if (err){
-					return(err);
-				}else{  // we should handle this but it's a mongo bug so swallow it
-					if(_content){
-						_content.remove();
-						console.log("deleted" + _content._id + ":" + _content.heading);
-						response.render('content-confirm', {
-							content: _content,
-							type: _content.type
-						});
-					}else{
-						response.render('save-error');
-					}
-				}
-			});
+		findOneContentAndAct(request.params.id, request, response, 'content-confirm.ejs', deleteData);
 	});
 
 		
-		// Slightly ugly route to avoid matching the script includes the pattern looks like a mongoose object id
-	app.get('/content-edit/:id([0-9abcde]*)', function (request, response) {
+	// Slightly ugly route to avoid matching the script includes the pattern looks like a mongoose object id
+	app.get('/content-edit/:id([0-9abcde]*)', isLoggedIn, function (request, response) {
 		
-		Content.findById((request.params.id),function (err, _content) {
-				if (err){
-					return(err);
-				}else{  // we should handle this but it's a mongo bug so swallow it
-					response.render('content-edit.ejs', {
-						content: _content
-					});
-				}
-				
-		});
+		findOneContentAndAct(request.params.id, request, response, 'content-edit.ejs', showData);
+			
 	});
 	
-	app.post('/content-edit/:id', function (request, response) {
+	app.post('/content-edit/:id', isLoggedIn, function (request, response) {
+		
+		findOneContentAndAct(request.params.id, request, response, 'content-confirm.ejs', saveData);
 
-		Content.findById((request.params.id),function (err, _content) {
-				if (err){
-					return(err);
-				}else{  // we should handle this but
-					console.log("Loaded: " + request.params.id);
-					console.log("Content" + _content._id + ":" + _content.heading + ":" + _content.content);
-					console.log("Request" + request.body.heading + ":" + request.body.content);
-					_content.heading = request.body.heading;
-					_content.content = request.body.content;
-					console.log("Content" + _content._id + ":" + _content.heading + ":" + _content.content);
-
-					_content.save(function (err) {
-    					if (err) return handleError(err);
-						console.log("Saved");				
-						response.render('content-confirm.ejs', {
-							type: request.body.type
-						});
-						
-  					});
-				}
-				
-		});
 
 	});
 	
-	app.post('/create-content/:type(event|community|vison)', function (request, response) {
+	app.post('/create-content/:type(event|community|vison)', isLoggedIn, function (request, response) {
 
-		// Persist the contact		
+		// Persist the content		
 		var newContent = new Content();
 		
 		newContent.date = new Date();
@@ -170,7 +124,7 @@ module.exports = function (app, passport,express) {
 	});
 	
 	app.get('/', function (req, res) {		
-		res.render('index.ejs', {});
+		res.render('index.ejs', {user: req.user});
 	});
 	
 	
@@ -198,6 +152,7 @@ module.exports = function (app, passport,express) {
 
 				res.render('show-content', {
 						contentType: _contentType,
+						user: req.user,
 						content: _content
 				});
 			});
@@ -205,7 +160,7 @@ module.exports = function (app, passport,express) {
 	});
 	
 	app.get('/community', function (req, res) {		
-		res.render('community.ejs', {});
+		res.render('community.ejs', {user: req.user});
 	});
 	
 	app.get('/vision', function (req, res) {		
@@ -215,7 +170,8 @@ module.exports = function (app, passport,express) {
 	// the login form
 	app.get('/login', function (req, res) {		
 		res.render('login.ejs', {
-			message: req.flash('loginMessage')
+			message: req.flash('loginMessage'),
+			user: req.user
 		});
 	});
 
@@ -223,17 +179,16 @@ module.exports = function (app, passport,express) {
 	app.get('/contact', function (req, res) {
 		
 		res.render('contact.ejs', {
+			user: req.user,
 			message: req.flash('contactMessage')
 		});
 	});
 	
 	// Logout
-	app.get('/logout', function (req, res) {
-		res.render('login.ejs', {
-			message: req.flash('loginMessage')
-		});
+	app.get('/logout', isLoggedIn, function (req, res) {
 		req.logout();
 		req.session.destroy();
+		res.render('index.ejs', {user: req.user});
 	});
 
 	// Page to show contacts received
@@ -288,6 +243,7 @@ module.exports = function (app, passport,express) {
 		fs.readdir(__dirname + '/../public/images/OurHistory', function (err, files) {
   			if (err) throw err;
 			res.render('gallery.ejs', {
+				user: req.user,
 				files: files
 			});
 		});
@@ -318,3 +274,54 @@ module.exports = function (app, passport,express) {
 
 
 };
+
+// ------------------------------------------------
+// findOneContentAndAct: Helper that gets content and calls acallback that's passed in
+function findOneContentAndAct(id,req, res, template, callback)
+{
+	console.log("In findOneContentAndAct");
+	Content.findById(id,function (err, _content) {
+				if (err){
+					callback(err,null, req, res, template);
+				}else{  // 
+					callback(null, _content, req, res, template);
+				}
+		
+	});
+
+}
+
+var deleteData = function(err, _content, req, res, template){
+	console.log("In delete data");
+	_content.remove();
+	res.render(template, {
+			user: req.user,
+			content: _content,
+			type: _content.type
+	});
+}
+
+var showData = function(err, _content, req, res, template){
+	console.log("in showData:" + _content.heading + "user:" + req.user  + "template:" + template);
+	res.render(template, {
+			user: req.user,
+			content: _content
+	});
+	
+}
+
+var saveData = function(err, _content, req, res, template){
+	console.log("in saveData:" + _content.heading + "user:" + req.user  + "template:" + template);
+	_content.heading = req.body.heading;
+	_content.content = req.body.content;
+	_content.save(function (err) {
+		if (err) return (err);
+		console.log("Saved");				
+		res.render(template, {
+				user: req.user,
+				content: _content,
+				type: _content.type
+		});
+	});
+}	
+

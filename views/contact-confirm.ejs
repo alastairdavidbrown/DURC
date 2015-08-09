@@ -3,13 +3,12 @@
 
 <head>
 	<title>Dundee URC</title>
-	<script src="fragment.js"></script>
-	<div data-fragment="head-frag.html"></div>
+	<% include head-frag %>
 </head>
 
 <body>
 	<!-- insert the navbar -->
-	<div data-fragment="nav-bar-frag.html"></div>
+	<% include nav-bar-frag %>
 
 	<div class="container">
 
@@ -21,13 +20,8 @@
 	</div>
 	<!-- /.container -->
 
-	<!-- Bootstrap core JavaScript
-        ================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-	<script src="../../dist/js/bootstrap.min.js"></script>
-	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-	<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+	<% include bootstrap-frag %>
+
 </body>
 
 </html>

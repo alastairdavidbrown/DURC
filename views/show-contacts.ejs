@@ -3,14 +3,13 @@
 
 <head>
 	<title>Starter Template for Bootstrap</title>
-	<script src="fragment.js"></script>
-	<div data-fragment="head-frag.html"></div>
+	<% include head-frag %>
 </head>
 
 <body>
 
 	<!-- insert the navbar -->
-	<div data-fragment="nav-bar-frag.html"></div>
+	<% include nav-bar-frag %>
 	
 	<div class="container">
 		<h2>Contacts...</h2>
@@ -52,5 +51,7 @@
 			</tbody>
 		</table>
 	</div>
+
+	<% include bootstrap-frag %>
 
 </body>

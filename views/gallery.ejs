@@ -3,8 +3,8 @@
 
 <head>
 	<title>Starter Template for Bootstrap</title>
-	<script src="/fragment.js"></script>
-	<div data-fragment="/head-frag.html"></div>
+	<% include head-frag %>
+
 
 	<!--START carousel-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -14,7 +14,8 @@
 </head>
 
 <body>
-	<div data-fragment="/nav-bar-frag.html"></div>
+	
+	<% include nav-bar-frag %>
 
 	<div class="container">
 		<div class="row">
@@ -54,5 +55,7 @@
 			</div>
 		</div>
 	</div>
+	
+	<% include bootstrap-frag %>
 
 </body>
