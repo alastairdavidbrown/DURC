@@ -57,7 +57,10 @@ module.exports = function (app, passport,express) {
 			});
 					
 			// confirm to the user that we'll get back
-			response.render('contact-confirm');
+			response.render('contact-confirm', {
+				user: request.user
+			});
+			
 					
 		}
 		

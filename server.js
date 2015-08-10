@@ -9,7 +9,6 @@ var session = require('express-session');
 var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var multer = require('multer');
 
 // set the view engine to ejs, cookie parser
 app.set('view engine', 'ejs');		// View engine
@@ -19,7 +18,8 @@ app.use(bodyParser.json());			// rbody parser
 app.use(bodyParser.urlencoded({
 	extended: true
 })); 								// for parsing application/x-www-form-urlencoded
-app.use(multer()); 					// for parsing multipart/form-data
+
+
 //routes
 
 //secret: 'span0dd2',
