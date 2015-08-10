@@ -1,0 +1,55 @@
+<div class="nav-bar">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#"><h4>Dundee URC</h4></a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<!--ul class="nav navbar-nav"-->
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="/"><h4>Home</h4></a>
+					</li>
+					<li><a href="/show-content/event"><h4>Events</h4></a>
+					</li>
+					<li><a href="/gallery"><h4>Gallery</h4></a>
+					</li>
+					<li><a href="/show-content/community"><h4>Community</h4></a>
+					</li>
+					<li><a href="/show-content/vision"><h4>Vision</h4></a>
+					</li>
+					<li><a href="/contact"><h4>Contact</h4></a>
+					</li>
+					<% if (user) { %>
+					<li>
+						<h3>
+							<div class="dropdown">
+								<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Admin
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li><a href="/contacts">Show Contacts</a></li>
+								<li><a href="/create-content/event">Content Manage</a></li>
+								<li><a href="/logout">Logout</a></li>
+
+						</h3>
+					  </ul>
+					</li>
+					<% }else{ %>
+						<li>
+							<h3>
+								<a href="login"><span class="glyphicon glyphicon-lock" aria-hidden="true" style="color:grey" ></span>
+							</h3>
+						</li>
+					<% } %>
+				</ul>
+			</div>
+		</div>
+	</nav>	
+</div>
+<div class="well"></div>
