@@ -1,4 +1,4 @@
-db = db.getSiblingDB('durc-db')
+//db = db.getSiblingDB('durc-db')
 
 var bulk = db.contenttypes.initializeUnorderedBulkOp();
 
