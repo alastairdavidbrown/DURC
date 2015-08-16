@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Dundee URC</title>
+	<% include head-frag %>
+</head>
+
+<body>
+	
+	<!-- insert the navbar -->
+	<% include nav-bar-frag %>
+	
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="well">
+					<h5><%= contentType	.description %></h5>
+				</div>
+
+				<div class="list-group">
+					
+					<% for (i = 0; i < content.length; i++){ %>
+						<a class="list-group-item">
+							<h4 class="list-group-item-heading">
+								<%= content[i].heading %>
+							</h4>
+							<p class="list-group-item-text">
+								<%= content[i].content %>
+							</p>
+						</a>
+					<% } %>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<% include bootstrap-frag %>
+
+</html>

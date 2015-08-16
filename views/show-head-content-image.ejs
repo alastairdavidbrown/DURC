@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Dundee URC</title>
+	<% include head-frag %>
+</head>
+
+<body>
+	
+	<!-- insert the navbar -->
+	<% include nav-bar-frag %>
+	
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="well">
+					<h5><%= contentType.description %></h5>
+				</div>
+
+				<div class="list-group">
+					<% console.log("Content description:" + contentType.description); %>
+					<% console.log("Content length:" + content.length); %>
+
+					<% for (i = 0; i < content.length; i++){ %>
+						<% console.log("Content is" + content[i].heading); %>
+						<% console.log("Content image:" + content[i].image); %>
+						<hr class="featurette-divider">
+						<div class="row featurette">
+							<div class="col-md-8">
+								<h2 class="featurette-heading"> <%= content[i].heading %>
+									</h2>
+								<p class="lead"> <%= content[i].content %> </p>
+									
+								<div class="col-md-4">
+									<img class="featurette-image img-rounded center-block" src="<%= content[i].image %>" alt="">
+								</div>
+							</div>
+						</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<% include bootstrap-frag %>
+
+</html>
