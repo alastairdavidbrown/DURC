@@ -12,6 +12,7 @@
 // get rid of the _ from the _contents etc.
 // check exception handling on all queries
 // sort out DB Config for local and remote
+// create-content for home and room rent
 
 
 // Models -------------------------------
@@ -128,33 +129,32 @@ module.exports = function (app, passport,express) {
 	});
 	
 	app.get('/', function (req, res) {		
-		res.render('index.ejs', {user: req.user});
+		res.redirect('/show-content/home');
 	});
 	
 	
-	app.get('/show-content/:type(event|community|vision)', function (req, res) {
+	app.get('/show-content/:type(event|community|vision|home|rent)', function (req, res) {
 		
 		// Look up the content type 
 		var _contentType;
-		console.log("Looking for content type " + req.params.type);
 		ContentType.find({'type': req.params.type}, function(err, queryContentType, _contentType) {
 			if (err){
 				console.log(err);
 				return(err);
 			}
-			_contentType =  {type: queryContentType[0].type, description: queryContentType[0].description};
-			console.log("Content type is " + _contentType.type + " description is " + _contentType.description);
+			_contentType =  {type: queryContentType[0].type, description: queryContentType[0].description, layout: queryContentType[0].layout};
 
 			// Now get the content 
+			console.log("Looking for content type " + req.params.type);
 			var _content = [];
 			Content.find({'type': req.params.type}, function(err, queryContent) {
 				var i = 0;
 				queryContent.forEach(function(content) {
-					_content[i] = {id: content._id, date: content.date, type: content.type, heading: content.heading, content: content.content};
+					_content[i] = {id: content._id, date: content.date, type: content.type, heading: content.heading, content: content.content, image: content.image};
 					i++;
 				});
-
-				res.render('show-content', {
+				console.log("Rendering " + _content.length + " items with show-" + _contentType.layout);
+				res.render("show-" + _contentType.layout, {
 						contentType: _contentType,
 						user: req.user,
 						content: _content

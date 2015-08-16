@@ -8,7 +8,8 @@ var contentSchema = mongoose.Schema({
 		date:	Date,
 		type:	String,
 		heading: String,
-		content: String
+		content: String,
+		image: String
 },{ collection : 'content' });
 
 
