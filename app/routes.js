@@ -11,6 +11,7 @@
 // remove regexps on the :params shouldn't be required if absolute paths used on the hrefs in the template. 
 // get rid of the _ from the _contents etc.
 // check exception handling on all queries
+// sort out DB Config for local and remote
 
 
 // Models -------------------------------
