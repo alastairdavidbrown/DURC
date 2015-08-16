@@ -192,7 +192,8 @@ module.exports = function (app, passport,express) {
 	app.get('/logout', isLoggedIn, function (req, res) {
 		req.logout();
 		req.session.destroy();
-		res.render('index.ejs', {user: req.user});
+		res.redirect('/show-content/home');
+
 	});
 
 	// Page to show contacts received
