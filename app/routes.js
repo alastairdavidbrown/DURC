@@ -12,7 +12,11 @@
 // get rid of the _ from the _contents etc.
 // check exception handling on all queries
 // sort out DB Config for local and remote
-// create-content for home and room rent
+// manage-content for home and room rent
+// cancel on dit content
+// confirm on delete content
+// backup content
+// rename edit-content
 
 
 // Models -------------------------------
@@ -79,20 +83,20 @@ module.exports = function (app, passport,express) {
 
 		
 	// Slightly ugly route to avoid matching the script includes the pattern looks like a mongoose object id
-	app.get('/content-edit/:id([0-9abcde]*)', isLoggedIn, function (request, response) {
+	app.get('/edit-content/:id([0-9abcde]*)', isLoggedIn, function (request, response) {
 		
-		findOneContentAndAct(request.params.id, request, response, 'content-edit.ejs', showData);
+		findOneContentAndAct(request.params.id, request, response, 'edit-content.ejs', showData);
 			
 	});
 	
-	app.post('/content-edit/:id', isLoggedIn, function (request, response) {
+	app.post('/edit-content/:id', isLoggedIn, function (request, response) {
 		
 		findOneContentAndAct(request.params.id, request, response, 'content-confirm.ejs', saveData);
 
 
 	});
 	
-	app.post('/create-content/:type(event|community|vison)', isLoggedIn, function (request, response) {
+	app.post('/manage-content/:type(event|community|vison)', isLoggedIn, function (request, response) {
 
 		// Persist the content		
 		var newContent = new Content();
@@ -106,7 +110,7 @@ module.exports = function (app, passport,express) {
 		// Check the size, if it's massive, redirect to the contact form with a message
 		console.log("Request Body is:" + JSON.stringify(request.body).length);
 		if (JSON.stringify(request.body).length > 2048) {
-			response.render('create-content', {
+			response.render('manage-content', {
 					message: 'Wow that\'s big, try typing a bit less!' });
 		}else{
 			newContent.save(function (err) {
@@ -216,8 +220,8 @@ module.exports = function (app, passport,express) {
 	});
 
 	
-	// Page to CRUD content - regexp to avoid recursion for js loads firing for loading e.g. /create-content/fragment.js
-	app.get('/create-content/:type(event|community|vision)', isLoggedIn, function (req, res) {
+	// Page to CRUD content - regexp to avoid recursion for js loads firing for loading e.g. /manage-content/fragment.js
+	app.get('/manage-content/:type(event|community|vision|home)', isLoggedIn, function (req, res) {
 
 		console.log("In Create Content, type is " + req.params.type);
 		var _content = [];
@@ -225,12 +229,12 @@ module.exports = function (app, passport,express) {
 		Content.find({'type': req.params.type}, function(err, queryContent) {
 			var i = 0;
     		queryContent.forEach(function(content) {
-				_content[i] = {id: content._id, date: content.date, type: content.type, heading: content.heading, content: content.content};
+				_content[i] = {id: content._id, date: content.date, type: content.type, heading: content.heading, content: content.content, image: content.image};
 				i++;
 			});
 			console.log("Retrieved " + _content.length + " content lines")
 			
-			res.render('create-content.ejs', {
+			res.render('manage-content.ejs', {
 					query: req.query,
 					user: req.user,
 					type: req.params.type,
@@ -259,7 +263,7 @@ module.exports = function (app, passport,express) {
 	// authentication route, used by the login form
 	app.post('/authenticate', passport.authenticate('local-login', {
 		//successRedirect: '/contacts', // redirect to the secure profile section
-		successRedirect: '/create-content/event', // redirect to the secure profile section
+		successRedirect: '/manage-content/event', // redirect to the secure profile section
 		failureRedirect: '/login', // redirect back to the signup page if there is an error
 		failureFlash: true // allow flash messages
 	}));
