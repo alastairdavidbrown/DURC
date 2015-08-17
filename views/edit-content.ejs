@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Dundee URC</title>
+	<% include head-frag %>
+</head>
+
+<body>
+	<div class="container">
+		<form id="contact" class="form-horizontal" method="post">
+			<fieldset>
+				<legend class="text-center header">Make your changes here then press Save</legend>
+				<div class="form-group">
+					<div class="col-lg-6">
+						<input id="heading" name="heading" type="text" value="<%=content.heading%>" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-10">
+						<textarea class="form-control" name="content" id="content" rows="6"><%=content.content%></textarea>
+					</div>
+				</div>
+				
+				<% if (content.type == 'home') { %>	
+					<div class="form-group">
+						<div class="col-lg-2">
+							<a class="thumbnail">
+								<img src="<%=content.image %>" alt="">
+							</a>
+						</div>
+					</div>
+
+					<div class="container">
+					  <h3>Popover Example</h3>
+					  <a 	href="#" data-toggle="popover" 
+						 	title="Popover Header" 
+						 	data-content="Some content inside the popover">Toggle popover</a>
+					</div>
+					<script>
+						$(document).ready(function(){
+							$('[data-toggle="popover"]').popover();   
+						});
+					</script>
+				<% } %>
+				
+				<div class="form-group">
+					<div class="col-lg-2">
+						<button type="submit" class="btn btn-primary btn-lg">Save</button>
+					</div>
+				</div>
+				<input class="hidden" id="type" name="type" type="text" value="<%=content.type%>" class="form-control">
+				</div>
+
+			</fieldset>
+		</form>
+	</div>
+
+
+</body>
+
+
+<% include bootstrap-frag %>
+
+
+
+</html>

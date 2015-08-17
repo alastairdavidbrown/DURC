@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Starter Template for Bootstrap</title>
+	<% include head-frag %>
+</head>
+
+<body>
+
+	<!-- insert the navbar -->
+	<% include nav-bar-frag %>
+	
+	<div class="well"></div>
+
+	<!-- set the page size and work out what page to display -->
+	<% var pageSize=6 %>
+	<% var pageRequested=query.page %>
+	<% if (typeof pageRequested === "undefined")pageRequested=1; %>
+	<% var startRow=pageSize*(pageRequested-1) %>
+	<% var endRow=(content.length < startRow+pageSize ?  content.length : startRow+pageSize) %>
+	<% var pages=(Math.ceil(content.length/pageSize)) %>
+
+	
+	<div class="container">
+		<!-- Single button -->
+		<div class="btn-group">
+  			<button type="button" class="btn btn-default dropdown-toggle" 
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Content Type<span class="caret"></span>
+  			</button>
+		  <ul class="dropdown-menu">
+			<li><a href="/manage-content/event">Events</a></li>
+			<li><a href="/manage-content/community">Community</a></li>
+ 			<li><a href="/manage-content/vision">Vision</a></li>
+ 			<li><a href="/manage-content/home">Home</a></li>  
+		  </ul>
+		</div>
+		<div class="table-responsive">
+			
+			<table class="table table-hover">
+			
+				<thead>
+					<tr>
+						<th>Heading</th>
+						<th>Content</th>
+						<% if (type == 'home') { %>
+							<th>Image</th>
+						<% } %>
+					</tr>
+				</thead>
+				<tbody>
+					<% for(var i=startRow; i<endRow; i++) { %>
+						<tr>
+							<td>
+								<%=content[i].heading %>
+							</td>
+							<td>
+								<%=content[i].content %>
+							</td>
+							<% if (type == 'home') { %>
+								<td>
+									<a class="thumbnail">
+      									<img src="<%=content[i].image %>" alt="">
+    								</a>
+								</td>
+							<% } %>
+							<td>
+								<a href="/edit-content/<%=content[i].id%>"><span class="glyphicon glyphicon-edit"></span>Edit..</a>
+							</td>
+							<td>
+								<a href="/content-delete/<%=content[i].id%>"<span class="glyphicon glyphicon-trash"></span>Delete</a>
+							</td>
+						<tr>
+					<% } %>	
+					
+					<!-- The New Row Inout -->
+					<form id="content" class="form-horizontal" method="post">
+
+						<tr>
+							
+							<td>
+								<input id="heading" name="heading" type="text" placeholder="Heading" class="form-control">
+							</td>
+							<td>
+								<input id="content" name="content" type="text" placeholder="Content" class="form-control">
+							</td>
+							<% if (type == 'home') { %>
+								<td>
+									<h4>
+										<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+									</h3>	
+								</td>
+							<% } %>
+							<td>
+								<input id="type" name="type" type="text" value="<%=type%>" class="hide">
+							</td>
+							<td>
+								<button type="submit" class="btn btn-primary btn-sm">Submit</button>
+							</td>
+						</tr>
+					
+					</form>		
+					
+		
+				</tbody>
+			</table>
+		</div>
+		
+		<!-- pagination control -->
+		<% if(content.length > pageSize ) { %>
+			<ul class="pagination">
+				<% if (pageRequested == 1 ) { %>
+					<li class="disabled"><a href="#">&laquo;</a></li>
+				<% }else { %>
+					<li><a href="?page=<%=pageRequested-1%>">&laquo;</a></li>
+				<% } %>
+				<% for (var i = 1; i<= pages; i++) { %> 
+					<% if (i == pageRequested) { %>
+						<li class="active"> <a href="?page=<%= i %>"> <%= i %> </a></li>	
+					<% }else{ %>
+						<li> <a href="?page=<%= i %>"> <%= i %> </a></li>
+					<% } %>
+				<% } %>
+				
+				<% if (pageRequested == pages ) { %>
+					<li class="disabled"> <a href="#"> &raquo;</a></li>
+				<% }else { %>
+					<li><a href="?page=<%=Number(pageRequested)+1%>">&raquo;</a></li>
+				<% } %>
+				
+				
+				
+			</ul>
+		<% } %>
+	</div>
+	<% include bootstrap-frag %>
+
+
+</body>
