@@ -37,73 +37,89 @@
 		</div>
 		<div class="table-responsive">
 			
-			<table class="table table-hover">
-			
-				<thead>
-					<tr>
-						<th>Heading</th>
-						<th>Content</th>
-						<% if (type == 'home') { %>
-							<th>Image</th>
-						<% } %>
-					</tr>
-				</thead>
-				<tbody>
-					<% for(var i=startRow; i<endRow; i++) { %>
-						<tr>
-							<td>
-								<%=content[i].heading %>
-							</td>
-							<td>
-								<%=content[i].content %>
-							</td>
-							<% if (type == 'home') { %>
-								<td>
-									<a class="thumbnail">
-      									<img src="<%=content[i].image %>" alt="">
-    								</a>
-								</td>
-							<% } %>
-							<td>
-								<a href="/edit-content/<%=content[i].id%>"><span class="glyphicon glyphicon-edit"></span>Edit..</a>
-							</td>
-							<td>
-								<a href="/content-delete/<%=content[i].id%>"<span class="glyphicon glyphicon-trash"></span>Delete</a>
-							</td>
-						<tr>
-					<% } %>	
-					
-					<!-- The New Row Inout -->
-					<form id="content" class="form-horizontal" method="post">
+			<!-- The New Row Input -->
+			<form id="content" class="form-horizontal" method="post">
+				<table class="table table-hover">
 
+					<thead>
 						<tr>
-							
-							<td>
-								<input id="heading" name="heading" type="text" placeholder="Heading" class="form-control">
-							</td>
-							<td>
-								<input id="content" name="content" type="text" placeholder="Content" class="form-control">
-							</td>
+							<th>Heading</th>
+							<th>Content</th>
 							<% if (type == 'home') { %>
-								<td>
-									<h4>
-										<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
-									</h3>	
-								</td>
+								<th>Image</th>
 							<% } %>
-							<td>
-								<input id="type" name="type" type="text" value="<%=type%>" class="hide">
-							</td>
-							<td>
-								<button type="submit" class="btn btn-primary btn-sm">Submit</button>
-							</td>
 						</tr>
-					
-					</form>		
-					
-		
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<% for(var i=startRow; i<endRow; i++) { %>
+							<tr>
+								<td>
+									<%=content[i].heading %>
+								</td>
+								<td>
+									<%=content[i].content %>
+								</td>
+								<% if (type == 'home') { %>
+									<td>
+										<a class="thumbnail">
+											<img src="<%=content[i].image %>" class="img-thumbnail" alt="">
+										</a>
+									</td>
+								<% } %>
+								<td>
+									<a href="/edit-content/<%=content[i].id%>"><span class="glyphicon glyphicon-edit"></span>Edit..</a>
+								</td>
+								<td>
+									<a href="/content-delete/<%=content[i].id%>"<span class="glyphicon glyphicon-trash"></span>Delete</a>
+								</td>
+							<tr>
+						<% } %>	
+
+							<tr>
+
+								<td>
+									<input id="heading" name="heading" type="text" placeholder="Heading" class="form-control">
+								</td>
+								<td>
+									<input id="content" name="content" type="text" placeholder="Content" class="form-control">
+								</td>
+								<td>
+									<!-- hidden inputs to take post data -->
+									<input id="type" name="type" type="text" value="<%=type%>" class="hide">
+									<input id="no_img" name="no_img" type="text" value="<%= files.length %>" class="hide">
+									<% for(var i=1; i<files.length; i++) { %>
+										<input id="file<%i%>" 
+											   name="file<%i%>" 
+											   value="<%= '/images/OurHistory/'+files[i] %>" 
+												class="hide">
+									<% } %>
+								</td>
+								<td>
+									<button type="submit" class="btn btn-primary btn-sm">Submit</button>
+								</td>
+							</tr>
+					<tbody>
+				</table>
+				<table class="table table-hover">
+					<tbody>		
+							<% if (type == 'home') { %>
+								<tr>
+									<% for(var i=1; i<files.length; i++) { %>
+										<td width="<%=(100/files.length)%>%">
+											<label class="radio-inline"><input type="radio" name="imageradio<%=i%>">
+													<img src="<%= '/images/OurHistory/'+files[i] %>" class="img-thumbnail" alt="">
+												</label>
+											</div>
+
+										</td>
+									<% } %>
+								</tr>
+
+							<% } %>
+					</tbody>
+				</table>
+			</form>		
+
 		</div>
 		
 		<!-- pagination control -->
@@ -127,9 +143,6 @@
 				<% }else { %>
 					<li><a href="?page=<%=Number(pageRequested)+1%>">&raquo;</a></li>
 				<% } %>
-				
-				
-				
 			</ul>
 		<% } %>
 	</div>
