@@ -20,14 +20,13 @@ app.use(bodyParser.urlencoded({
 })); 								// for parsing application/x-www-form-urlencoded
 
 
-//routes
-
 //secret: 'span0dd2',
 app.use(session({
 	secret: 'durc150607',
 	saveUninitialized: true,
 	resave: true
 }));
+
 app.use(passport.initialize());		// passport authentication
 app.use(passport.session());
 app.use(flash());					// flash for messaging

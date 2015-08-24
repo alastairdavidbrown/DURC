@@ -22,7 +22,7 @@ bulk.insert( { 	type: "vision",
 			  	description: "Here's our vision for the future and the changes we've completed recently",
 			 	layout: "head-content-list"});
 
-bulk.insert( { 	type: "rent", 
+bulk.insert( { 	type: "hire", 
 			  	description: "Here's the rooms we have available for rent, use the contact page if you want to make a booking",
 			 	layout: "head-content-image"});
 

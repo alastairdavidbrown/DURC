@@ -36,13 +36,13 @@ module.exports = function (passport) {
 			passwordField: 'password',
 			passReqToCallback: true // allows us to pass back the entire request to the callback
 		},
-		function (req, email, password, done) { // callback with email and password from our form
+		function (request, email, password, done) { // callback with email and password from our form
 
-			validateUserDB(email, password, req, function (user) {	
+			validateUserDB(email, password, request, function (user) {	
 
 				// if no validation fails return the message
 				if (!user)
-					return done(null, false, req.flash('loginMessage', 'Authentication Failed.'));
+					return done(null, false, request.flash('loginMessage', 'Authentication Failed.'));
 
 				// all is well, return successful user
 				return done(null, user);
