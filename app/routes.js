@@ -1,22 +1,27 @@
 // app/routes.js
 
+// Refactors
 // break the monolith
 // put the real content into hire
-// refactor the get data and render somthging bits to make data passed and responsibiility of getting data clear
 // get rid of console logging
 // check big messages are handled well
 // content-confirm consistency of parameters
 // remove regexps on the :params shouldn't be required if absolute paths used on the hrefs in the template. 
-// get rid of the _ from the _contents etc.
-// check exception handling on all queries
-// sort out DB Config for local and remote
+// get rid of the  from the contents etc.
 // manage-content for home and room rent
 // cancel on delete content
 // confirm on delete content
+// upload content
 // backup content
 // rename edit-content
+// findContentByTypeAndRender make work for single row where id not working
 // abstract image locations
-// nasty radioimage hack
+//
+// Nasty Hacks 
+// determinig which home page content manage image is selected 
+// U/X for the content manage where pictures are selected
+// make findContentByTypeAndRender generic for show and manage.
+
 
 
 // Models -------------------------------
@@ -59,7 +64,8 @@ module.exports = function (app, passport,express) {
 					message: 'Wow that\'s big, try typing a bit less!' });
 		}else{
 			newContact.save(function (err) {
-				if (err) return console.error(err); 
+				if (err) {
+				}
 			});
 					
 			// confirm to the user that we'll get back
@@ -96,7 +102,15 @@ module.exports = function (app, passport,express) {
 
 	});
 	
-	app.post('/manage-content/:type(event|community|vison|home)', isLoggedIn, function (request, response) {
+	// Page to CRUD content - regexp to avoid recursion for js loads firing for loading e.g. /manage-content/fragment.js
+	app.get('/manage-content/:type(event|community|vision|home|hire)', isLoggedIn, function (request, response) {
+		findContentByTypeAndRender(request, response, renderTemplate)
+		//findContentByTypeAndRender(request, response, 'manage-content.ejs', renderTemplate)
+
+	});	
+	
+	
+	app.post('/manage-content/:type(event|community|vison|home|hire)', isLoggedIn, function (request, response) {
 
 		// Persist the content		
 		var newContent = new Content();
@@ -108,9 +122,7 @@ module.exports = function (app, passport,express) {
 			// iterate throught the request body looking for a radio button called imageradio[0-9]
 			for (var reqbody in request.body ){
 				if (reqbody.substring(0,10) == "imageradio"){
-					radioid=reqbody.substring(10);
-					console.log("Found an imageradio, id is " + radioid + ":" + request.body.file[radioid])
-					
+					radioid=reqbody.substring(10);		
 				}
 			}
 			newContent.image=request.body.file[radioid];
@@ -126,8 +138,10 @@ module.exports = function (app, passport,express) {
 					message: 'Wow that\'s big, try typing a bit less!' });
 		}else{
 			newContent.save(function (err) {
-				console.log(err);
-				if (err) return console.error(err); // we should handle this
+				if (err) {
+					console.error(err);
+					response.render('generic-error.ejs', {user: request.user});		
+				}	
 			});
 					
 			// confirm to the user that we'll get back
@@ -149,29 +163,8 @@ module.exports = function (app, passport,express) {
 	});
 	
 	
-	app.get('/show-content/:type(event|community|vision|home|hire)', function (request, response) {
-	
-		// Look up the content type 
-		var _contentType;
-		ContentType.find({'type': request.params.type}, function(err, queryContentType, _contentType) {
-			if (err){
-				console.log(err);
-				return(err);
-			}
-			_contentType={type: queryContentType[0].type, 
-						 description: queryContentType[0].description, 
-						 layout: queryContentType[0].layout};
-
-			findAllContentAndAct(request, response, "show-" + _contentType.layout, renderTemplate, _contentType);
-		});
-	});
-	
-	app.get('/community', function (request, response) {		
-		response.render('community.ejs', {user: request.user});
-	});
-	
-	app.get('/vision', function (request, response) {		
-		response.render('vision.ejs', {});
+	app.get('/show-content/:type(event|community|vision|home|hire)', function (request, response) {	
+		findContentByTypeAndRender(request, response, renderTemplate);
 	});
 	
 	// the login form
@@ -203,35 +196,32 @@ module.exports = function (app, passport,express) {
 	// Page to show contacts received
 	app.get('/contacts', isLoggedIn, function (request, response) {
 
-		var _contacts = [];
+		var contacts = [];
 
 		Contact.find({}, function(err, queryContacts) {
 			var i = 0;
     		queryContacts.forEach(function(contact) {
-				_contacts[i] = {date: contact.date, fname: contact.fname, lname: contact.lname, phone: contact.phone, email: contact.email, message: contact.message };
+				contacts[i] = {date: contact.date, fname: contact.fname, lname: contact.lname, phone: contact.phone, email: contact.email, message: contact.message };
 				i++;
 			});
 
 			response.render('show-contacts.ejs', {
 				user: request.user, 
-				contacts: _contacts
+				contacts: contacts
 			});
 	    });
 	});
 
 	
-	// Page to CRUD content - regexp to avoid recursion for js loads firing for loading e.g. /manage-content/fragment.js
-	app.get('/manage-content/:type(event|community|vision|home)', isLoggedIn, function (request, response) {
-		
-		findAllContentAndAct(request, response, 'manage-content.ejs', renderTemplate)
-
-	});	
 	
 	// The images pages
 	app.get('/gallery', function (request, response) {
 		
 		fs.readdir(__dirname + '/../public/images/OurHistory', function (err, files) {
-  			if (err) throw err;
+  			if (err){
+				console.error(err);
+				response.render('generic-error.ejs', {user: request.user});		
+			} 
 			response.render('gallery.ejs', {
 				user: request.user,
 				files: files
@@ -267,89 +257,131 @@ module.exports = function (app, passport,express) {
 // findOneContentAndAct: Helper that gets content and calls acallback that's passed in
 function findOneContentAndAct(id,request, response, template, callback)
 {
-	// Deal with document not found error.
-	Content.findById(id,function (err, _content) {
+	// find a content object (by id) and acto on it
+	Content.findById(id,function (err, content) {
 		if (err){
 			console.error(err);
-			response.render('save-error.ejs', {user: request.user});		
+			response.render('generic-error.ejs', {msg: err.message, user: request.user});		
 		}else{  
-			callback(null, _content, request, response, template);
+			if (!content)
+				response.render('generic-error.ejs', {msg: 'No content found for id:' + id, user: request.user});
+			else
+				callback(null, content, request, response, template);
 		}
 	});
 }
 
 // ------------------------------------------------
-// findAllContentAndAct: Helper that gets content and calls acallback that's passed in
-function findAllContentAndAct(request, response, template, callback, _contentType)
+// findContentByTypeAndRender: Helper that gets content and calls acallback that's passed in
+// if id is null it gets all content of the passed type, otherwise the specific id
+function findContentByTypeAndRender(request, response, callback)
 {
 
-	var _content = [];
-	Content.find({'type': request.params.type}, function(err, Content) {
-		var i = 0;
-		Content.forEach(function(content) {
-			_content[i] = {	id: content._id, 
-							date: content.date, 
-							type: content.type, 
-							heading: content.heading, 
-							content: content.content, 
-							image: content.image};
-				i++;
-		});
-		callback(null, _content, request, response, template, _contentType);
-	});			 
+	// get the content 
+	var content = [];
+	
+	Content.find({'type': request.params.type}, function(err, contents) {
 
+		if (err){
+			console.error(err);
+			response.render('generic-error.ejs', {user: request.user});		
+		}else{  
+
+			var i = 0;
+			// iterate through content and create an object that reporesents the content
+			contents.forEach(function(queryContents) {
+				content[i] = {	id: queryContents._id, 
+								date: queryContents.date, 
+								type: queryContents.type, 
+								heading: queryContents.heading, 
+								content: queryContents.content, 
+								image: queryContents.image};
+				i++;
+			});
+
+			// Get the content type
+			var contentType;
+			// Look up the content type
+			ContentType.find({'type': request.params.type}, function(err, queryContentType) {
+				if (err){
+					console.error(err);
+					render('generic-error.ejs');
+				}
+
+				var contentType={	type: queryContentType[0].type, 
+									description: queryContentType[0].description, 
+									layout: queryContentType[0].layout};
+				// if the calling URL was .*/manage-content/ override the template
+				if(request.originalUrl.match('/manage-content')) contentType.layout='manage-content.ejs';
+
+				// Call the callback, if the oringinal URL is show-content then the template is 
+				callback(null, content, request, response, contentType);	
+
+			});
+
+		}
+				 
+	});
 }
 
+
+
+// -----------------------------------------------------------------------------------------------
 // Callback to render a template
-var renderTemplate = function(err, _content, request, response, template, _contentType){	
+var renderTemplate = function(err, content, request, response, contentType){	
 	// Only get and send files if need be
 	fs.readdir(__dirname + '/../public/images/HomePageSmall', function (err, files) {
-  			if (err) throw err;
-		response.render(template, {
+		
+  		if (err){
+			console.error(err);
+			response.render('generic-error.ejs', {user: request.user});		
+		}
+
+		response.render(contentType.layout, {
 			query: request.query,
 			user: request.user,
 			type: request.params.type,
-			content: _content,
+			content: content,
 			files: files,
-			contentType: _contentType
+			contentType: contentType
 		});
 	});
 }
 
 // Callback to delete the object passed (cruD)
-var deleteData = function(err, _content, request, response, template){
+var deleteData = function(err, content, request, response, template){
 	
 	// No need to check err, we're here becuase it's null,
-	// _content guaranteed to be valid however theck incase race condition
-	_content.remove();
+	// content guaranteed to be valid however check incase of race condition
+	content.remove();
 	
 	response.render(template, {
 		user: request.user,
-		content: _content,
-		type: _content.type
+		content: content,
+		type: content.type
 	});
 };
 
 // callback to show the content passed
-var showData = function(err, _content, request, response, template){
-	console.log("in showData:" + _content.heading + "user:" + request.user  + "template:" + template);
+var showData = function(err, content, request, response, template){
+	console.log("in showData:" + content.heading + "user:" + request.user  + "template:" + template);
 	response.render(template, {
 			user: request.user,
-			content: _content
+			content: content
 	});
 	
 }
 
 // callback to save the data passed into the object passed (cRUd)
-var saveData = function(err, _content, request, response, template){
-	_content.heading = request.body.heading;
-	_content.content = request.body.content;
-	_content.save(function (err) {
+var saveData = function(err, content, request, response, template){
+	content.heading = request.body.heading;
+	content.content = request.body.content;
+	content.save(function (err) {
 		if (err) return (err);
 		response.render(template, {
 				user: request.user,
-				content: _content,
-				type: _content.type
+				content: content,
+				type: content.type
 		});
 	});
 }	
