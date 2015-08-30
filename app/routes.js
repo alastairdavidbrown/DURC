@@ -92,7 +92,7 @@ module.exports = function (app, passport,express) {
 	// Slightly ugly route to avoid matching the script includes the pattern looks like a mongoose object id
 	app.get('/edit-content/:id([0-9abcde]*)', isLoggedIn, function (request, response) {
 		
-		findOneContentAndAct(request.params.id, request, response, 'edit-content.ejs', showData);
+		findOneContentAndAct(request.params.id, request, response, 'edit-head-content-list.ejs', showData);
 			
 	});
 	
