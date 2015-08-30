@@ -16,6 +16,7 @@
 // rename edit-content
 // findContentByTypeAndRender make work for single row where id not working
 // abstract image locations
+// are arrays for content necessary (why note pass the mongosse reult set) 
 //
 // Nasty Hacks 
 // determinig which home page content manage image is selected 
