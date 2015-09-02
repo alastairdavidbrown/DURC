@@ -7,21 +7,19 @@
 // check big messages are handled well
 // content-confirm consistency of parameters
 // remove regexps on the :params shouldn't be required if absolute paths used on the hrefs in the template. 
-// get rid of the  from the contents etc.
-// manage-content for home and room rent
 // cancel on delete content
 // confirm on delete content
 // upload content
 // backup content
-// rename edit-content
-// findContentByTypeAndRender make work for single row where id not working
 // abstract image locations
 // are arrays for content necessary (why note pass the mongosse reult set) 
+// consistency of naming of layout types (head-content-list, head-content-image (why not -list))
 //
 // Nasty Hacks 
 // determinig which home page content manage image is selected 
 // U/X for the content manage where pictures are selected
 // make findContentByTypeAndRender generic for show and manage.
+// using renderTeplate isn't really generic, overrides template name for manage-content and prepends show-
 
 
 
@@ -85,20 +83,20 @@ module.exports = function (app, passport,express) {
 	app.get('/content-delete/:id([0-9abcde]*)', isLoggedIn, function (request, response) {
 		
 		console.log("Deleting" + request.params.id);
-		findOneContentAndAct(request.params.id, request, response, 'content-confirm.ejs', deleteData);
+		findOneContentAndAct(request.params.id, request, response, deleteOneContent);
 		
 	});
 	
 	// Slightly ugly route to avoid matching the script includes the pattern looks like a mongoose object id
 	app.get('/edit-content/:id([0-9abcde]*)', isLoggedIn, function (request, response) {
 		
-		findOneContentAndAct(request.params.id, request, response, 'edit-head-content-list.ejs', showData);
+		findOneContentAndAct(request.params.id, request, response, editOneContent);
 			
 	});
 	
 	app.post('/edit-content/:id', isLoggedIn, function (request, response) {
 		
-		findOneContentAndAct(request.params.id, request, response, 'content-confirm.ejs', saveData);
+		findOneContentAndAct(request.params.id, request, response, saveOneContent);
 
 
 	});
@@ -256,7 +254,7 @@ module.exports = function (app, passport,express) {
 
 // ------------------------------------------------
 // findOneContentAndAct: Helper that gets content and calls acallback that's passed in
-function findOneContentAndAct(id,request, response, template, callback)
+function findOneContentAndAct(id,request, response, callback)
 {
 	// find a content object (by id) and acto on it
 	Content.findById(id,function (err, content) {
@@ -267,7 +265,7 @@ function findOneContentAndAct(id,request, response, template, callback)
 			if (!content)
 				response.render('generic-error.ejs', {msg: 'No content found for id:' + id, user: request.user});
 			else
-				callback(null, content, request, response, template);
+				callback(null, content, request, response);
 		}
 	});
 }
@@ -312,8 +310,12 @@ function findContentByTypeAndRender(request, response, callback)
 				var contentType={	type: queryContentType[0].type, 
 									description: queryContentType[0].description, 
 									layout: queryContentType[0].layout};
-				// if the calling URL was .*/manage-content/ override the template
-				if(request.originalUrl.match('/manage-content')) contentType.layout='manage-content.ejs';
+				
+				// if the calling URL was .*/manage-content/ override the template, or prepend the show-
+				if(request.originalUrl.match('/manage-content')) 
+					contentType.layout='manage-content.ejs'
+				else
+					contentType.layout='show-' + contentType.layout;
 
 				// Call the callback, if the oringinal URL is show-content then the template is 
 				callback(null, content, request, response, contentType);	
@@ -350,39 +352,51 @@ var renderTemplate = function(err, content, request, response, contentType){
 }
 
 // Callback to delete the object passed (cruD)
-var deleteData = function(err, content, request, response, template){
+var deleteOneContent = function(err, content, request, response){
 	
 	// No need to check err, we're here becuase it's null,
 	// content guaranteed to be valid however check incase of race condition
 	content.remove();
 	
-	response.render(template, {
+	response.render('content-confirm.ejs', {
 		user: request.user,
-		content: content,
 		type: content.type
 	});
 };
 
 // callback to show the content passed
-var showData = function(err, content, request, response, template){
-	console.log("in showData:" + content.heading + "user:" + request.user  + "template:" + template);
-	response.render(template, {
-			user: request.user,
-			content: content
-	});
+var editOneContent = function(err, content, request, response){
+
+	// work out what template to render to edit the content
+	ContentType.find({'type': content.type}, function(err, queryContentType) {
+		if (err){
+			console.error(err);
+			render('generic-error.ejs');
+		}
+
+		var contentType={	type: queryContentType[0].type, 
+							description: queryContentType[0].description, 
+							layout: queryContentType[0].layout};
+		
+		console.log("Looking up Layout for type " + request.params.type + "... rendering " + contentType.layout);
 	
+		response.render('edit-' + contentType.layout, {
+			user: request.user,
+			contentType: contentType,
+			content: content
+		});
+	});
 }
 
 // callback to save the data passed into the object passed (cRUd)
-var saveData = function(err, content, request, response, template){
+var saveOneContent = function(err, content, request, response, template){
 	content.heading = request.body.heading;
 	content.content = request.body.content;
 	content.save(function (err) {
 		if (err) return (err);
-		response.render(template, {
-				user: request.user,
-				content: content,
-				type: content.type
+		response.render('content-confirm.ejs', {
+			user: request.user,
+			type: content.type
 		});
 	});
 }	

@@ -4,7 +4,7 @@ var bulk = db.contenttypes.initializeUnorderedBulkOp();
 
 bulk.insert( { 	type: "home", 
 			  	description: "Welcome to the Dundee United Reformed Church Website",
-			 	layout: "show-head-content-image"});
+			 	layout: "head-content-image"});
 
 bulk.insert( { 	type: "gallery", 
 			  	description: "This is our gallery with pictures of the church",
@@ -12,18 +12,18 @@ bulk.insert( { 	type: "gallery",
 
 bulk.insert( { 	type: "event", 
 			  	description: "Here's the events that happen at the church.",
-			 	layout: "show-head-content-list" });
+			 	layout: "head-content-list" });
 
 bulk.insert( { 	type: "community", 
 			  	description: "We're engaged in many community activities and groups here's a few",
-			 	layout: "show-head-content-list"});
+			 	layout: "head-content-list"});
 
 bulk.insert( { 	type: "vision", 
 			  	description: "Here's our vision for the future and the changes we've completed recently",
-			 	layout: "show-head-content-list"});
+			 	layout: "head-content-list"});
 
 bulk.insert( { 	type: "hire", 
 			  	description: "Here's the rooms we have available for rent, use the contact page if you want to make a booking",
-			 	layout: "show-head-content-image"});
+			 	layout: "head-content-image"});
 
 bulk.execute();
