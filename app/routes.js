@@ -1,8 +1,9 @@
 // app/routes.js
 
 // Refactors
+// MONGO_ROOT / DB_NAME
+// Get DB_NAME from heroku properly (currently works becuase user and name is thesame
 // break the monolith
-// put the real content into hire
 // get rid of console logging
 // check big messages are handled well
 // content-confirm consistency of parameters
@@ -10,7 +11,6 @@
 // cancel on delete content
 // confirm on delete content
 // upload content
-// backup content
 // abstract image locations
 // are arrays for content necessary (why note pass the mongosse reult set) 
 // consistency of naming of layout types (head-content-list, head-content-image (why not -list))
