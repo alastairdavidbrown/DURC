@@ -1,6 +1,7 @@
 // app/routes.js
 
 // Refactors
+// make cancel confirm generic
 // MONGO_ROOT / DB_NAME
 // Get DB_NAME from heroku properly (currently works becuase user and name is thesame
 // break the monolith
@@ -8,8 +9,6 @@
 // check big messages are handled well
 // content-confirm consistency of parameters
 // remove regexps on the :params shouldn't be required if absolute paths used on the hrefs in the template. 
-// cancel on delete content
-// confirm on delete content
 // upload content
 // abstract image locations
 // are arrays for content necessary (why note pass the mongosse reult set) 
