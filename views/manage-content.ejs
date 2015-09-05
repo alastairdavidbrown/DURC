@@ -7,10 +7,10 @@
 </head>
 
 <body>
-
-	<!-- insert the navbar -->
-	<% include nav-bar-frag %>
 	
+	
+	<!-- insert the navbar -->
+	<% include nav-bar-frag %>	
 	<div class="well"></div>
 
 	<!-- set the page size and work out what page to display -->
@@ -71,7 +71,12 @@
 									<a href="/edit-content/<%=content[i].id%>"><span class="glyphicon glyphicon-edit"></span>Edit..</a>
 								</td>
 								<td>
-									<a href="/content-delete/<%=content[i].id%>"<span class="glyphicon glyphicon-trash"></span>Delete</a>
+									<a 	href="#confirmModal" data-toggle="modal" data-target="#confirmModal" 
+									   	data-whatever="<%=content[i].id%>" 
+									   	data-objid="<%=content[i].id%>"  
+									   	data-heading="<%=content[i].heading%>"
+										<span class="glyphicon glyphicon-trash"></span>Delete</a>
+									<input id="id" name="id" type="text" value="<%=content[i].id%>" class="hide">
 								</td>
 							<tr>
 						<% } %>	
@@ -123,6 +128,8 @@
 
 		</div>
 		
+
+
 		<!-- pagination control -->
 		<% if(content.length > pageSize ) { %>
 			<ul class="pagination">
@@ -149,5 +156,48 @@
 	</div>
 	<% include bootstrap-frag %>
 
+	<!--Modal -->
+	<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			  	<div class="alert alert-danger" role="alert">
+					<h4>Warning
+						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					</h4>
+				</div>
+		  </div>
+		  <div class="modal-body">
+			<form>
+			  <h4 class="modal-title" id="confirmModalLabel"></h4>
 
+			  
+			</form>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			<button type="button" class="btn btn-primary">OK</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<script>
+		$('#confirmModal').on('show.bs.modal', function (event) {
+	  		var button = $(event.relatedTarget) // Button that triggered the modal
+			var recipient = button.data('whatever') // Extract info from data-* attributes
+			var objid = button.data('objid') 
+			var heading = button.data('heading')
+
+			// Update the modal's content using jQuery
+			var modal = $(this)
+			modal.find('.modal-title').text('About to delete ' + heading )
+			modal.find('.modal-body input').val(recipient)
+			//model.find('.modal-body modal-warning').text('About to delete ' + objid )
+	})
+	</script>
+
+	<!--Modal -->
 </body>
