@@ -142,12 +142,8 @@ module.exports = function (app, passport,express) {
 				}	
 			});
 					
-			// confirm to the user that we'll get back
-			response.render('content-confirm.ejs', {
-				query: request.query,
-				user: request.user,
-				type: request.body.type
-			});
+	       response.redirect('/manage-content/' + content.type);
+
 					
 		}
 		
@@ -357,10 +353,12 @@ var deleteOneContent = function(err, content, request, response){
 	// content guaranteed to be valid however check incase of race condition
 	content.remove();
 	
-	response.render('content-confirm.ejs', {
-		user: request.user,
-		type: content.type
-	});
+	response.redirect('/manage-content/' + content.type);
+
+//	response.render('content-confor.ejs', {
+//		user: request.user,
+//		type: content.type
+//	});
 };
 
 // callback to show the content passed
@@ -393,10 +391,7 @@ var saveOneContent = function(err, content, request, response, template){
 	content.content = request.body.content;
 	content.save(function (err) {
 		if (err) return (err);
-		response.render('content-confirm.ejs', {
-			user: request.user,
-			type: content.type
-		});
+    	response.redirect('/manage-content/' + content.type);
 	});
 }	
 
