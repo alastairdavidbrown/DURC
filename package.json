@@ -1,6 +1,6 @@
 {
   "name": "durc-express",
-  "main": "server.js",
+  "main": "durc-server.js",
   "dependencies": {
     "express": "4.13.3",
     "bootstrap": "3.3.5",
@@ -14,7 +14,6 @@
     "multer": "1.0.3",
     "ejs": "2.3.3",
     "bcrypt-nodejs": "0.0.3",
-    "bootbox": "4.4.0",
     "mongoose": "4.1.3"
   }
 }
