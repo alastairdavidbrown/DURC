@@ -15,11 +15,11 @@ module.exports = function (passport) {
 
             // if no user is found, return the message
             if (!user)
-                return fn(null, false, request.flash('loginMessage', 'Authentication Failed')); 
+                return fn(null, false); 
 						
             // if the user is found but the password is wrong
             if (!user.validPassword(password)){
-                return fn(null, false, request.flash('loginMessage', 'Authentication Failed')); 
+                return fn(null, false); 
 			}else{
             	// all is well, return successful user
 				return fn(user);
