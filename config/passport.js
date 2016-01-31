@@ -40,7 +40,7 @@ module.exports = function (passport) {
 
 			validateUserDB(email, password, request, function (user) {	
 
-				// if no validation fails return the message
+                // if no validation fails return the message
 				if (!user)
 					return done(null, false, request.flash('loginMessage', 'Authentication Failed.'));
 
