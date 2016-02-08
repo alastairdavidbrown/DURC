@@ -116,19 +116,20 @@ module.exports = function (app, passport,express) {
 		newContent.date = new Date();
 		newContent.heading = request.body.heading;
 		newContent.content = request.body.content;
-		if (request.body.type = 'home'){
+        console.log("In Create-content type is " + request.body.type);
+
+		if (request.body.type == 'home'){
 			// iterate throught the request body looking for a radio button called imageradio[0-9]
 			for (var reqbody in request.body ){
 				if (reqbody.substring(0,10) == "imageradio"){
 					radioid=reqbody.substring(10);		
 				}
 			}
+            if (typeof(radioid) == 'undefined') radioid=0;
 			newContent.image=request.body.file[radioid];
 		}
 		
-		newContent.type = request.body.type; 
-		console.log("In Create-content type is " + request.body.type);
-		
+		newContent.type = request.body.type; 		
 		// Check the size, if it's massive, redirect to the contact form with a message
 		console.log("Request Body is:" + JSON.stringify(request.body).length);
 		if (JSON.stringify(request.body).length > 2048) {
@@ -142,7 +143,7 @@ module.exports = function (app, passport,express) {
 				}	
 			});
 					
-	       response.redirect('/manage-content/' + content.type);
+	       response.redirect('/manage-content/' + request.body.type);
 
 					
 		}
