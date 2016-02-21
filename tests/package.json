@@ -1,0 +1,6 @@
+{
+  "name": "moonraker",
+  "dependencies": {
+    "moonraker": "0.3.5"
+  }
+}
